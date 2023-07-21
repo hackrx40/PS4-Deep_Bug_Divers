@@ -63,7 +63,7 @@ async function getAndDownloadImages(images) {
 
 // Example usage: Call the getAndDownloadImages function with the list of images you want to retrieve and download
 const imagesToRetrieveAndDownload = [
-  { name: '1.jpeg' },
+  { name: 'adani.jpeg' },
   { name: '2.jpeg' },
   { name: '3.jpeg' },
   { name: '4.jpeg' },
