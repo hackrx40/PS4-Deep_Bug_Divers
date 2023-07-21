@@ -1,7 +1,7 @@
 <h1>Stock Frontend</h1> 
 Made at Bajaj Finserv HackRx 4.0
 
-# Getting Started with Create React App
+# Getting Started with Create React AppS
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
