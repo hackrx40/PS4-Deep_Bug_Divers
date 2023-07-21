@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "./component/Navbar";
 import HomePage from "./component/HomePage";
 import Footer from "./component/Footer";
 import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import StockDetails from "./component/StockDetail";
+import Detail from "./component/Detail";
 
 const stockData = [
   {
@@ -31,6 +31,24 @@ const stockData = [
 ];
 
 const App = () => {
+  // const [stockData, setStockData] = useState([]);
+
+  // const fetchUserData = () => {
+  //   fetch(
+  //     "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBM&apikey=Z5ULGI1WCWNLXRMZ"
+  //   )
+  //     .then((response) => {
+  //       return response.json();
+  //     })
+  //     .then((data) => {
+  //       setStockData(data);
+  //     });
+  // };
+
+  // useEffect(() => {
+  //   fetchUserData();
+  // }, []);
+
   return (
     <Router>
       <div className="App">
@@ -43,7 +61,7 @@ const App = () => {
               path="/"
               element={<HomePage stockData={stockData} />}
             />
-            <Route path="/stockdetails/:stockName" element={<StockDetails />} />
+            <Route path="/detail/:stockName" element={<Detail />} />
           </Routes>
         </div>
         <Footer />

@@ -3,6 +3,7 @@ import { RiSearchEyeLine } from "react-icons/ri";
 import StockData from "./StockData";
 
 const HomePage = ({ stockData }) => {
+  
   const [selectedCards, setSelectedCards] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [submitted, setSubmitted] = useState(false);
