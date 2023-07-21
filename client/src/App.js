@@ -26,23 +26,26 @@ const App = () => {
           }));
 
           // Find the latest data of each stock
-          const latestStockData = stockInfo.reduce((accumulator, currentValue) => {
-            const existingStock = accumulator.find(
-              (stock) => stock.stockName === currentValue.stockName
-            );
-            if (existingStock) {
-              // Compare the trade-date to get the latest entry
-              const existingDate = new Date(existingStock.tradeDate);
-              const currentDate = new Date(currentValue.tradeDate);
-              if (currentDate > existingDate) {
-                existingStock.stockPrice = currentValue.stockPrice;
-                existingStock.tradeDate = currentValue.tradeDate;
+          const latestStockData = stockInfo.reduce(
+            (accumulator, currentValue) => {
+              const existingStock = accumulator.find(
+                (stock) => stock.stockName === currentValue.stockName
+              );
+              if (existingStock) {
+                // Compare the trade-date to get the latest entry
+                const existingDate = new Date(existingStock.tradeDate);
+                const currentDate = new Date(currentValue.tradeDate);
+                if (currentDate > existingDate) {
+                  existingStock.stockPrice = currentValue.stockPrice;
+                  existingStock.tradeDate = currentValue.tradeDate;
+                }
+              } else {
+                accumulator.push(currentValue);
               }
-            } else {
-              accumulator.push(currentValue);
-            }
-            return accumulator;
-          }, []);
+              return accumulator;
+            },
+            []
+          );
 
           setStockData(latestStockData);
         }
@@ -62,7 +65,11 @@ const App = () => {
           <Routes>
             {/* Pass stockData as a prop inside the Route */}
             {stockData.length > 0 ? (
-              <Route exact path="/" element={<HomePage stockData={stockData} />} />
+              <Route
+                exact
+                path="/"
+                element={<HomePage stockData={stockData} />}
+              />
             ) : null}
             <Route path="/Detail/:stockName" element={<Detail />} />
           </Routes>

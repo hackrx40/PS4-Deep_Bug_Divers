@@ -8,13 +8,13 @@ const Footer = () => {
         <p>
           <a
             target="_blank"
-            href="https://github.com/HackRx-4-0/Stock_Frontend"
+            href="https://github.com/hackrx40/PS4-Deep_Bug_Divers/tree/main"
             rel="noreferrer"
           >
             <i class="fa fa-github"></i>
           </a>
           <a
-            href="https://github.com/HackRx-4-0/Stock_Frontend"
+            href="https://github.com/hackrx40/PS4-Deep_Bug_Divers/tree/main"
             target="_blank"
             rel="noopener noreferrer"
             className="text-white"
