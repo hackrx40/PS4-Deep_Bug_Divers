@@ -4,10 +4,19 @@ const MyComponent = () => {
   return (
     <nav className="bg-[#050713] p-4">
       <div className="container mx-auto flex justify-between items-center">
-        <div className="text-white font-bold text-xl"><a href="/">
-          Bajaj Finserv
+        <div className="text-white font-bold text-xl items-center">
+          <a href="/">
+            <div className="flex items-center">
+              <img
+                src="/logo.png"
+                alt="Logo"
+                sizes="0.5rem"
+                className="mr-1/2 h-8 w-8"
+              />
+              ajaj Finserv
+            </div>
           </a>
-          </div>
+        </div>
         <ul className="flex space-x-4">
           <li>
             <a

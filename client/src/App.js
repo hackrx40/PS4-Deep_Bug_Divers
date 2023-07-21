@@ -13,7 +13,7 @@ const App = () => {
     const fetchStockData = async () => {
       try {
         const response = await fetch(
-          "https://script.google.com/macros/s/AKfycbwJcbaAOxhKrJmtdBcZIIHGm42k_7KkagkQbQLgBU3v236BZ_aijV7c6WQ2R5nkke_P8w/exec"
+          "https://script.google.com/macros/s/AKfycbyanpA3EAjGyTQMAVBu_YvRZwmfVt9T0qXQAvvs5j_7nuCkjNV1DnDCOsnWj6N6WyEY/exec"
         );
         const data = await response.json();
 
@@ -21,7 +21,7 @@ const App = () => {
           // Filter out the first row which contains table headers
           const stockInfo = data.data.slice(1).map((item) => ({
             stockName: item.symbol,
-            stockPrice: item.close.toString(),
+            stockPrice: item.close.toFixed(2).toString(),
             tradeDate: item["trade-date"],
           }));
 
