@@ -8,8 +8,6 @@ import matplotlib.pyplot as plt
 import os
 from datetime import datetime, timedelta
 import time
-import firebase_admin
-from firebase_admin import credentials, firestore, storage
 
 app = Flask(__name__)
 
@@ -29,18 +27,6 @@ def fetch_data_from_api():
         print(f"JSON decode error occurred: {json_err}")
     return None
 
-# Function to initialize Firebase Admin SDK
-def initialize_firebase():
-    try:
-        print("Current working directory:", os.getcwd())
-        cred = credentials.Certificate("stocks_credentials.json")
-        firebase_admin.initialize_app(cred, {
-           'storageBucket': 'gs://chartimages-e5374.appspot.com'
-        })
-        print("Firebase Initialized Successfully!")
-    except Exception as e:
-        print("Firebase Initialization Failed:", e)
-
 # Function to create the "charts" directory if it doesn't exist
 def create_charts_directory():
     if not os.path.exists("charts"):
@@ -51,24 +37,6 @@ def create_charts_directory():
 # Function to convert regular datetime to UTC datetime
 def convert_to_utc(dt):
     return pd.Timestamp(dt).tz_localize("UTC")
-
-# Function to upload chart image to Firebase Storage and get the download URL
-def upload_to_firebase_storage(symbol, chart_path):
-    bucket = storage.bucket()
-    blob = bucket.blob(f"charts/{symbol}.png")
-    blob.upload_from_filename(chart_path)
-    return blob.generate_signed_url(datetime.now() + timedelta(days=365), method='GET')
-
-# Function to save the chart details to Firestore
-def save_chart_details_to_firestore(symbol, firebase_url):
-    db = firestore.client()
-    collection_name = "charts"
-    document_name = symbol
-    chart_data = {
-        "symbol": symbol,
-        "firebase_url": firebase_url
-    }
-    db.collection(collection_name).document(document_name).set(chart_data)
 
 # Function to generate and save line chart locally for each stock for one month
 def generate_and_save_line_chart_one_month(symbol, stock_data, one_month_ago_utc):
@@ -90,16 +58,10 @@ def generate_and_save_line_chart_one_month(symbol, stock_data, one_month_ago_utc
     plt.savefig(chart_path)
     plt.close()
 
-    # Upload the chart image to Firebase Storage and get the URL
-    firebase_url = upload_to_firebase_storage(symbol, chart_path)
-
-    # Save the chart details (symbol and Firebase URL) to Firestore
-    save_chart_details_to_firestore(symbol, firebase_url)
-
 # Function to generate and save line charts locally for each stock for three months
 def generate_and_save_line_charts(data):
     stocks_data = {}
-    for item in data[1:]:
+    for item in data[1:]:  # Skip the first entry, which contains column names
         symbol = item["symbol"]
         trade_date = item["trade-date"]
         close_price = float(item["close"])
@@ -139,6 +101,7 @@ def generate_and_save_line_charts(data):
 
         # Generate and save line chart for one month
         generate_and_save_line_chart_one_month(symbol, df, convert_to_utc(one_month_ago))
+
 @app.route("/")
 def index():
     start_time = time.time()  # Record the start time
@@ -156,7 +119,4 @@ def index():
     return f"Line charts generated and saved locally!<br>Time taken: {time_taken:.2f} seconds"
 
 if __name__ == "__main__":
-    # Initialize Firebase Admin SDK
-    initialize_firebase()
-
     app.run(debug=True)

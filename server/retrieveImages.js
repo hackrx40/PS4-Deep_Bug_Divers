@@ -1,83 +1,71 @@
-// retrieveImages.js
 const admin = require('firebase-admin');
-const path = require('path');
-const { performance } = require('perf_hooks');
-const fs = require('fs');
-const axios = require('axios');
-
-// Replace the serviceAccount object with your Firebase service account credentials
-const serviceAccount = require('./stocks_credentials.json'); // Update the path accordingly
+const serviceAccount = require('./stocks_credentials.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  storageBucket: 'gs://stocks-444ce.appspot.com',
+  storageBucket: 'stocks-444ce.appspot.com', // Replace with your Firebase Storage bucket URL
 });
 
+const db = admin.firestore();
 const bucket = admin.storage().bucket();
 
-// Function to retrieve download URLs of images and download them locally
-async function getAndDownloadImages(images) {
+async function listImagesInStorage() {
   try {
-    // Start the timer
-    const startTime = performance.now();
-
-    const downloadUrls = [];
-
-    for (const image of images) {
-      const remoteFilePath = 'images/' + image.name;
-      const [url] = await bucket.file(remoteFilePath).getSignedUrl({
-        action: 'read',
-        expires: '03-01-2500', // Set an appropriate expiration date
-      });
-
-      downloadUrls.push({ name: image.name, url });
-
-      // Download the image locally
-      const localFilePath = path.join(__dirname, 'down', image.name);
-      const response = await axios.get(url, { responseType: 'arraybuffer' });
-      fs.writeFileSync(localFilePath, response.data);
-      console.log(
-        `Image "${image.name}" downloaded locally to ${localFilePath}`
-      );
-    }
-
-    // End the timer
-    const endTime = performance.now();
-    const retrievalTime = (endTime - startTime) / 1000; // Convert to seconds
-
-    console.log('Download URLs of images:');
-    console.log(downloadUrls);
-
-    console.log(
-      `Time taken to retrieve and download images: ${retrievalTime.toFixed(
-        2
-      )} seconds`
-    );
-
-    return downloadUrls;
+    const [files] = await bucket.getFiles({ prefix: 'images/' });
+    console.log('Files in the "images" folder:');
+    files.forEach((file) => {
+      console.log(file.name);
+    });
   } catch (error) {
-    console.error('Error getting download URLs:', error);
-    throw error;
+    console.error('Error listing files in the "images" folder:', error);
   }
 }
 
-// Example usage: Call the getAndDownloadImages function with the list of images you want to retrieve and download
-const imagesToRetrieveAndDownload = [
-  { name: 'adani.jpeg' },
-  { name: '2.jpeg' },
-  { name: '3.jpeg' },
-  { name: '4.jpeg' },
-  { name: '5.jpeg' },
-  { name: '6.jpeg' },
-  { name: '7.jpeg' },
+async function retrieveImageUrlForSymbol(symbol) {
+  try {
+    // Remove the '.png' extension from the symbol to match the image file name
+    const imageName = symbol.replace('.png', '');
+    const imagePath = `images/${imageName}.png`;
 
-  // Add more images as needed...
-];
+    // Get the image download URL
+    const [url] = await bucket.file(imagePath).getSignedUrl({
+      action: 'read',
+      expires: '01-01-2500', // Set the expiration date accordingly
+    });
 
-getAndDownloadImages(imagesToRetrieveAndDownload)
-  .then((downloadUrls) => {
-    // Do whatever you want with the downloadUrls, e.g., display images in a web app
-  })
-  .catch((error) => {
-    console.error('Error:', error);
-  });
+    return url;
+  } catch (error) {
+    console.error('Error retrieving image URL from Firebase Storage:', error);
+    return null;
+  }
+}
+
+async function retrieveImageUrlsForSymbols(symbols) {
+  try {
+    const imageUrls = [];
+    for (const symbol of symbols) {
+      const imageUrl = await retrieveImageUrlForSymbol(symbol);
+      if (imageUrl) {
+        imageUrls.push(imageUrl);
+      }
+    }
+    return imageUrls;
+  } catch (error) {
+    console.error('Error retrieving image URLs:', error);
+    return [];
+  }
+}
+
+async function main() {
+  // List images in the "images" folder in Firebase Storage
+  await listImagesInStorage();
+
+  // Retrieve image URLs for multiple symbols
+  const symbolsToRetrieve = ['1_ADANIPORTS.png', '3_ADANIENT.png'];
+  const imageUrls = await retrieveImageUrlsForSymbols(symbolsToRetrieve);
+  console.log('Image URLs:', imageUrls);
+}
+
+main().catch((error) => {
+  console.error('Error:', error);
+});
