@@ -16,7 +16,7 @@ function App(props) {
     // Function to fetch the JSON data
     const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/data');
+        const response = await fetch('http://localhost:3001/api/data');
         // console.log(savior);
         const jsonData = await response.json(); // Convert response to JSON
         console.log(response, jsonData, props.stockName);
