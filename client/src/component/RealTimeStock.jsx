@@ -20,7 +20,6 @@ function App() {
         // console.log(savior);
         const jsonData = await response.json(); // Convert response to JSON
         console.log(response, jsonData);
-
         // json.current = jsonData['3'];
         // console.log(json.current);
         setData(jsonData['3']); // Extract the specific key value from the JSON data
