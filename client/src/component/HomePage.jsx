@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { RiSearchEyeLine } from "react-icons/ri";
 import StockData from "./StockData";
 
+
 const HomePage = ({ stockData }) => {
   const [selectedCards, setSelectedCards] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -34,6 +35,9 @@ const HomePage = ({ stockData }) => {
 
   return (
     <div className="container mx-auto py-8 px-20">
+      <div>
+        
+      </div>
       <div className="mb-8 flex items-center">
         <input
           type="text"

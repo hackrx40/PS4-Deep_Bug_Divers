@@ -6,7 +6,6 @@ admin.initializeApp({
   storageBucket: 'stocks-444ce.appspot.com', // Replace with your Firebase Storage bucket URL
 });
 
-const db = admin.firestore();
 const bucket = admin.storage().bucket();
 
 async function listImagesInStorage() {
